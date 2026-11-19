@@ -335,7 +335,7 @@ function measure(now,idx){
 function onFrame(now,idx){
   if(hasRVFC) measure(now,idx);
   if(state==='recording') handleFrame(idx);
-  if(state==='live') drawPreview(idx);
+  if(state==='live'||state==='recording') drawPreview(idx);
 }
 function drawPreview(idx){
   const p=plan(target);
