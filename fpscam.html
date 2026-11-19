@@ -315,7 +315,10 @@ function measure(now,idx){
   if(!ms.t){ms={t:now,i:idx};return}
   const dt=now-ms.t; if(dt<1500)return;
   const fps=(idx-ms.i)/(dt/1000); ms={t:now,i:idx};
-  if(state==='live'&&fps>=1&&fps<=240){const s=snapFps(fps);if(s!==camFps){camFps=s;updateFpsUI()}}
+  if(state==='live'&&fps>=1&&fps<=240){
+    const s=snapFps(fps);
+    if(s!==camFps&&Math.abs(fps-camFps)/camFps>=0.08){camFps=s;updateFpsUI()}
+  }
 }
 function onFrame(now,idx){
   if(hasRVFC) measure(now,idx);
@@ -347,7 +350,7 @@ function pushFrame(){
   if(rec.track.requestFrame) rec.track.requestFrame();
 }
 function handleFrame(idx){
-  if(rec.last!==null&&idx-rec.last<rec.n) return;
+  if(rec.last!==null&&idx-rec.last<rec.plan.n) return;
   rec.last=idx; rec.frames++; pushFrame();
   if(rec.fps<=8) dot.animate([{transform:'scale(1.7)',opacity:1},{transform:'scale(1)',opacity:.45}],{duration:240});
 }
@@ -371,7 +374,7 @@ function startRecording(){
   const bps=Math.round(Math.min(10e6,Math.max(2e6,8e6*(crop.cw*crop.ch)/(1920*1080))));
   try{recorder=new MediaRecorder(out,mime?{mimeType:mime,videoBitsPerSecond:bps}:{videoBitsPerSecond:bps})}
   catch(e){toast('Recording could not be started.');return}
-  rec={n:p.n,fps:p.fps,last:null,frames:0,chunks:[],track,t0:performance.now(),tEnd:0};
+  rec={plan:p,fps:p.fps,last:null,frames:0,chunks:[],track,t0:performance.now(),tEnd:0};
   recorder.ondataavailable=e=>{if(e.data&&e.data.size)rec.chunks.push(e.data)};
   recorder.onstop=finishRecording;
   recorder.start(1000);
@@ -397,7 +400,7 @@ function finishRecording(){
   const type=(recorder&&recorder.mimeType)||chunks[0].type||'video/webm';
   const blob=new Blob(chunks,{type});
   if(lastRec) URL.revokeObjectURL(lastRec.url);
-  lastRec={blob,url:URL.createObjectURL(blob),duration:(rec.tEnd-rec.t0)/1000,fps:rec.fps,n:rec.n,type};
+  lastRec={blob,url:URL.createObjectURL(blob),duration:(rec.tEnd-rec.t0)/1000,fps:rec.fps,n:rec.plan.n,type};
   // Thumbnail for the playback button
   const tc=document.createElement('canvas'); tc.width=tc.height=112;
   const s=Math.min(canvas.width,canvas.height);
