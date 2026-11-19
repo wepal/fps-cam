@@ -75,8 +75,8 @@ canvas.fill{position:absolute;inset:0;width:100%;height:100%;background:#000;dis
 .fpsbtn:disabled{opacity:.4}
 #app[data-rec="1"] .fpsbtn:disabled{opacity:1}
 #fpsOrbit{position:absolute;inset:0;pointer-events:none;z-index:1}
-#fpsOrbit i{position:absolute;top:-3.5px;left:50%;width:7px;height:7px;transform:translateX(-50%);border-radius:50%;background:#fff;
-  box-shadow:0 0 5px rgba(0,0,0,.9),0 0 2px #fff}
+#fpsOrbit svg{width:100%;height:100%;overflow:visible}
+#fpsOrbit circle{fill:none;stroke:#fff;stroke-width:4;stroke-dasharray:0 175.929;filter:drop-shadow(0 0 5px rgba(0,0,0,.9)) drop-shadow(0 0 2px #fff)}
 
 /* Frame rate selection */
 .sheet{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45)}
@@ -149,7 +149,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
         <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="#fff"/></svg>
       </button>
       <button id="recBtn" class="shutter" aria-label="Start recording" disabled></button>
-      <button id="fpsBtn" class="fpsbtn glass" aria-label="Set frame rate"><b id="fpsVal">15</b><small>fps</small><span id="fpsOrbit" aria-hidden="true"><i></i></span></button>
+      <button id="fpsBtn" class="fpsbtn glass" aria-label="Set frame rate"><b id="fpsVal">15</b><small>fps</small><span id="fpsOrbit" aria-hidden="true"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" transform="rotate(-90 28 28)"></circle></svg></span></button>
     </div>
   </div>
 
@@ -194,6 +194,7 @@ const $ = id => document.getElementById(id);
 const app=$('app'), live=$('live'), player=$('player'), pv=$('playerView');
 const recBtn=$('recBtn'), fpsBtn=$('fpsBtn'), fpsVal=$('fpsVal'), thumbBtn=$('thumbBtn'), flipBtn=$('flipBtn');
 const fpsOrbit=$('fpsOrbit');
+const fpsOrbitArc=fpsOrbit.querySelector('circle');
 const badge=$('badge'), dot=$('dot'), timerEl=$('timer'), badgeFps=$('badgeFps');
 const sheet=$('sheet'), sheetNum=$('sheetNum'), fpsRange=$('fpsRange'), fpsInfo=$('fpsInfo'), presetsEl=$('presets');
 const gate=$('gate'), gateMsg=$('gateMsg'), gateBtn=$('gateBtn'), toastEl=$('toast');
@@ -228,15 +229,18 @@ const fmtTime=s=>{s=Math.max(0,s||0);const m=Math.floor(s/60);return m+':'+Strin
 let toastT=0;
 function toast(msg,ms=2800){toastEl.textContent=msg;toastEl.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>toastEl.hidden=true,ms)}
 function snapFps(x){for(const k of [5,10,12,15,20,24,25,30,48,50,60,90,120]){if(Math.abs(x-k)/k<0.08)return k}return Math.max(1,Math.round(x))}
-function orbitToTop(fps){
+function animateOrbit(fps){
   const duration=1000/fps;
   if(!orbitAnimation||orbitDuration!==duration){
     if(orbitAnimation) orbitAnimation.cancel();
-    orbitAnimation=fpsOrbit.animate([{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}],
+    const circumference=2*Math.PI*28;
+    orbitAnimation=fpsOrbitArc.animate([
+      {strokeDasharray:`0 ${circumference}`},
+      {strokeDasharray:`${circumference} ${circumference}`}
+    ],
       {duration,iterations:Infinity,easing:'linear'});
     orbitDuration=duration;
   }
-  orbitAnimation.currentTime=0;
 }
 
 /* Closest possible frame rate: take every nth camera frame (camFps / n). */
@@ -358,7 +362,7 @@ function drawPreview(idx){
   if(previewLast!==null&&idx-previewLast<p.n) return;
   previewLast=idx;
   if(!live.videoWidth) return;
-  if(state==='live') orbitToTop(p.fps);
+  if(state==='live') animateOrbit(p.fps);
   previewCanvas.width=live.videoWidth;
   previewCanvas.height=live.videoHeight;
   previewCtx.drawImage(live,0,0);
@@ -390,7 +394,7 @@ function pushFrame(){
 }
 function handleFrame(idx){
   if(rec.last!==null&&idx-rec.last<rec.plan.n) return;
-  rec.last=idx; rec.frames++; orbitToTop(rec.fps); pushFrame();
+  rec.last=idx; rec.frames++; animateOrbit(rec.fps); pushFrame();
   if(rec.fps<=8) dot.animate([{transform:'scale(1.7)',opacity:1},{transform:'scale(1)',opacity:.45}],{duration:240});
 }
 function pickMime(){
