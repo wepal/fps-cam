@@ -149,7 +149,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
         <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="#fff"/></svg>
       </button>
       <button id="recBtn" class="shutter" aria-label="Start recording" disabled></button>
-      <button id="fpsBtn" class="fpsbtn glass" aria-label="Set frame rate"><b id="fpsVal">15</b><small>fps</small><span id="fpsOrbit" aria-hidden="true"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" transform="rotate(-90 28 28)"></circle></svg></span></button>
+      <button id="fpsBtn" class="fpsbtn glass" aria-label="Set frame rate"><b id="fpsVal">1</b><small>fps</small><span id="fpsOrbit" aria-hidden="true"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" transform="rotate(-90 28 28)"></circle></svg></span></button>
     </div>
   </div>
 
@@ -158,10 +158,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
       <div class="card-head"><h2>Frame rate</h2><button id="sheetClose" class="done">Done</button></div>
       <div class="readout">
         <button id="decBtn" class="step" aria-label="Decrease frame rate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12"/></svg></button>
-        <div class="num" id="sheetNum">15</div><div class="unit">fps</div>
+        <div class="num" id="sheetNum">1</div><div class="unit">fps</div>
         <button id="incBtn" class="step" aria-label="Increase frame rate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg></button>
       </div>
-      <input id="fpsRange" type="range" min="1" max="30" step="1" value="15" aria-label="Frame rate in frames per second">
+      <input id="fpsRange" type="range" min="1" max="30" step="1" value="1" aria-label="Frame rate in frames per second">
       <div class="presets" id="presets"></div>
       <p class="info" id="fpsInfo"></p>
     </div>
@@ -217,7 +217,7 @@ function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 
 let state='live';            // live | recording | stopping | playback
 let stream=null, vtrack=null, camFps=30, multiCam=false;
-let target=Math.min(30,Math.max(1,Math.round(+lsGet('fps',15)||15)));
+let target=Math.min(30,Math.max(1,Math.round(+lsGet('fps',1)||1)));
 let lastRec=null, rec=null, recorder=null, timerId=0, wake=null, crop=null;
 let previewLast=null;
 let orbitAnimation=null, orbitDuration=0;
