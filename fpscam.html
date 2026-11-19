@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>Framerate Kamera</title>
+<title>Framerate Camera</title>
 <style>
-/* Layout: Kamerabild füllt das Fenster, Bedienelemente schweben als Glas-Buttons darüber (Kamera-App-Prinzip). */
+/* Layout: The camera image fills the window, with glass controls floating above it (camera app style). */
 :root{
   --bg:#000; --fg:#f5f5f2; --dim:rgba(245,245,242,.62);
   --glass:rgba(32,32,34,.58); --line:rgba(255,255,255,.16);
@@ -36,7 +36,7 @@ video.fill{position:absolute;inset:0;width:100%;height:100%;background:#000}
 .icon-btn svg{width:22px;height:22px}
 .icon-btn:disabled{opacity:.4}
 
-/* Kamera-Ansicht */
+/* Camera view */
 .top{position:absolute;left:0;right:0;top:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
   padding:calc(12px + var(--sai-t)) max(16px,var(--sai-r)) 0 max(16px,var(--sai-l));pointer-events:none}
 .top>*{pointer-events:auto}
@@ -71,7 +71,7 @@ video.fill{position:absolute;inset:0;width:100%;height:100%;background:#000}
 .fpsbtn small{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:2px}
 .fpsbtn:disabled{opacity:.4}
 
-/* Bildraten-Auswahl */
+/* Frame rate selection */
 .sheet{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45)}
 .card{width:min(460px,calc(100% - 24px));margin-bottom:calc(12px + var(--sai-b));padding:18px 20px 18px;border-radius:26px;
   background:rgba(28,28,30,.82);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);border:1px solid var(--line)}
@@ -99,7 +99,7 @@ input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba
 input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--fg)}
 input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:#fff}
 
-/* Wiedergabe */
+/* Playback */
 #playerView{z-index:10}
 #playerView .ui{transition:opacity .25s}
 #playerView:not(.show) .ui{opacity:0;pointer-events:none}
@@ -131,30 +131,30 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
   <div class="top">
     <div></div>
     <div id="badge" class="badge" hidden aria-live="off"><span id="dot" class="dot"></span><span id="timer">0:00</span><span class="sub" id="badgeFps"></span></div>
-    <button id="flipBtn" class="icon-btn glass end" aria-label="Kamera wechseln" hidden>
+    <button id="flipBtn" class="icon-btn glass end" aria-label="Switch camera" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-4M4 5v3h3M4 13a8 8 0 0 0 14.5 4M20 19v-3h-3"/></svg>
     </button>
   </div>
 
   <div class="bottom">
     <div class="bar">
-      <button id="thumbBtn" class="thumb" disabled aria-label="Letzte Aufnahme wiedergeben">
+      <button id="thumbBtn" class="thumb" disabled aria-label="Play latest recording">
         <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="#fff"/></svg>
       </button>
-      <button id="recBtn" class="shutter" aria-label="Aufnahme starten" disabled></button>
-      <button id="fpsBtn" class="fpsbtn glass" aria-label="Bildrate einstellen"><b id="fpsVal">15</b><small>fps</small></button>
+      <button id="recBtn" class="shutter" aria-label="Start recording" disabled></button>
+      <button id="fpsBtn" class="fpsbtn glass" aria-label="Set frame rate"><b id="fpsVal">15</b><small>fps</small></button>
     </div>
   </div>
 
   <div id="sheet" class="sheet" hidden>
-    <div class="card" role="dialog" aria-label="Bildrate">
-      <div class="card-head"><h2>Bildrate</h2><button id="sheetClose" class="done">Fertig</button></div>
+    <div class="card" role="dialog" aria-label="Frame rate">
+      <div class="card-head"><h2>Frame rate</h2><button id="sheetClose" class="done">Done</button></div>
       <div class="readout">
-        <button id="decBtn" class="step" aria-label="Eine Bildrate weniger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12"/></svg></button>
+        <button id="decBtn" class="step" aria-label="Decrease frame rate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12"/></svg></button>
         <div class="num" id="sheetNum">15</div><div class="unit">fps</div>
-        <button id="incBtn" class="step" aria-label="Eine Bildrate mehr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg></button>
+        <button id="incBtn" class="step" aria-label="Increase frame rate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg></button>
       </div>
-      <input id="fpsRange" type="range" min="1" max="30" step="1" value="15" aria-label="Bildrate in Bildern pro Sekunde">
+      <input id="fpsRange" type="range" min="1" max="30" step="1" value="15" aria-label="Frame rate in frames per second">
       <div class="presets" id="presets"></div>
       <p class="info" id="fpsInfo"></p>
     </div>
@@ -163,20 +163,20 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
   <div id="playerView" class="view" hidden>
     <video id="player" class="fill" playsinline></video>
     <div class="ptop ui">
-      <button id="pClose" class="icon-btn glass" aria-label="Zurück zur Kamera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <button id="pClose" class="icon-btn glass" aria-label="Back to camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <div class="pinfo" id="pInfo"></div>
-      <button id="pSave" class="icon-btn glass end" aria-label="Video sichern"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg></button>
+      <button id="pSave" class="icon-btn glass end" aria-label="Save video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg></button>
     </div>
     <div class="pbottom ui">
       <div class="seekrow"><span id="tCur">0:00</span><input id="seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Position"><span id="tDur">0:00</span></div>
-      <button id="ppBtn" class="big glass" aria-label="Wiedergabe">
+      <button id="ppBtn" class="big glass" aria-label="Playback">
         <svg id="icoPlay" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
         <svg id="icoPause" viewBox="0 0 24 24" hidden><rect x="6.5" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>
       </button>
     </div>
   </div>
 
-  <div id="gate" class="view gate" hidden><div><p id="gateMsg"></p><button id="gateBtn" class="pill">Kamera erlauben</button></div></div>
+  <div id="gate" class="view gate" hidden><div><p id="gateMsg"></p><button id="gateBtn" class="pill">Allow camera</button></div></div>
 </div>
 <div id="toast" class="toast" hidden></div>
 
@@ -193,8 +193,8 @@ const seek=$('seek'), tCur=$('tCur'), tDur=$('tDur'), ppBtn=$('ppBtn'), pInfo=$(
 
 const canvas=document.createElement('canvas');
 const ctx=canvas.getContext('2d',{alpha:false});
-const nf1=new Intl.NumberFormat('de-AT',{maximumFractionDigits:1});
-const nf2=new Intl.NumberFormat('de-AT',{maximumFractionDigits:2});
+const nf1=new Intl.NumberFormat('en-US',{maximumFractionDigits:1});
+const nf2=new Intl.NumberFormat('en-US',{maximumFractionDigits:2});
 const hasRVFC='requestVideoFrameCallback' in HTMLVideoElement.prototype;
 
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
@@ -205,7 +205,7 @@ let stream=null, vtrack=null, camFps=30, multiCam=false;
 let target=Math.min(30,Math.max(1,Math.round(+lsGet('fps',15)||15)));
 let lastRec=null, rec=null, recorder=null, timerId=0, wake=null, crop=null;
 
-/* ---------- Hilfsfunktionen ---------- */
+/* ---------- Helpers ---------- */
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const even=x=>Math.max(2,Math.round(x/2)*2);
 const fmtTime=s=>{s=Math.max(0,s||0);const m=Math.floor(s/60);return m+':'+String(Math.floor(s%60)).padStart(2,'0')};
@@ -213,7 +213,7 @@ let toastT=0;
 function toast(msg,ms=2800){toastEl.textContent=msg;toastEl.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>toastEl.hidden=true,ms)}
 function snapFps(x){for(const k of [5,10,12,15,20,24,25,30,48,50,60,90,120]){if(Math.abs(x-k)/k<0.08)return k}return Math.max(1,Math.round(x))}
 
-/* Nächstmögliche Bildrate: Von den Kamerabildern wird jedes n-te übernommen (camFps / n). */
+/* Closest possible frame rate: take every nth camera frame (camFps / n). */
 function plan(t){
   const c=camFps, lo=Math.max(1,Math.floor(c/t)), hi=lo+1;
   const n=Math.abs(c/lo-t)<=Math.abs(c/hi-t)?lo:hi;
@@ -229,12 +229,12 @@ function updateFpsUI(){
   fpsRange.style.setProperty('--p',((target-1)/29*100)+'%');
   $('decBtn').disabled=target<=1; $('incBtn').disabled=target>=30;
   presetsEl.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.fps===target)));
-  const cam=`Kamera: ${nf2.format(camFps)} Bilder/s`;
+  const cam=`Camera: ${nf2.format(camFps)} frames/s`;
   let txt;
-  if(p.n===1&&p.exact) txt=`Jedes Kamerabild wird aufgenommen (${cam}).`;
-  else if(p.exact) txt=`Aufgenommen wird jedes <strong>${p.n}.</strong> Bild (${cam}).`;
-  else if(p.n===1) txt=`${target} fps sind mit dieser Kamera nicht möglich (${cam}). Aufgenommen wird mit <strong>${nf2.format(p.fps)} fps</strong>.`;
-  else txt=`${target} fps lassen sich mit dieser Kamera (${cam}) nicht genau erreichen. Aufgenommen wird mit <strong>${nf2.format(p.fps)} fps</strong> (jedes ${p.n}. Bild).`;
+  if(p.n===1&&p.exact) txt=`Every camera frame is recorded (${cam}).`;
+  else if(p.exact) txt=`Every <strong>${p.n}th</strong> frame is recorded (${cam}).`;
+  else if(p.n===1) txt=`${target} fps is not possible with this camera (${cam}). Recording at <strong>${nf2.format(p.fps)} fps</strong>.`;
+  else txt=`${target} fps cannot be reached exactly with this camera (${cam}). Recording at <strong>${nf2.format(p.fps)} fps</strong> (every ${p.n}th frame).`;
   fpsInfo.innerHTML=txt;
 }
 function setTarget(v){
@@ -245,7 +245,7 @@ function setTarget(v){
 function sync(){
   const recording=state==='recording'||state==='stopping';
   app.dataset.rec=recording?'1':'0';
-  recBtn.setAttribute('aria-label',recording?'Aufnahme beenden':'Aufnahme starten');
+  recBtn.setAttribute('aria-label',recording?'Stop recording':'Start recording');
   recBtn.disabled=state==='stopping'||!stream;
   fpsBtn.disabled=recording;
   thumbBtn.disabled=recording||!lastRec;
@@ -253,14 +253,14 @@ function sync(){
   badge.hidden=!recording;
 }
 
-/* ---------- Kamera ---------- */
+/* ---------- Camera ---------- */
 function camError(e){
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return 'Kamerazugriff ist hier nicht verfügbar. Öffne die Seite über https:// oder http://localhost.';
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return 'Camera access is not available here. Open the page over https:// or http://localhost.';
   switch(e&&e.name){
-    case 'NotAllowedError': case 'SecurityError': return 'Kein Zugriff auf die Kamera. Erlaube die Kamera in den Browser-Einstellungen und versuche es erneut.';
-    case 'NotFoundError': case 'OverconstrainedError': return 'Es wurde keine Kamera gefunden.';
-    case 'NotReadableError': return 'Die Kamera wird gerade von einer anderen App verwendet.';
-    default: return 'Die Kamera konnte nicht gestartet werden.';
+    case 'NotAllowedError': case 'SecurityError': return 'Camera access denied. Allow camera access in your browser settings and try again.';
+    case 'NotFoundError': case 'OverconstrainedError': return 'No camera was found.';
+    case 'NotReadableError': return 'The camera is currently being used by another app.';
+    default: return 'The camera could not be started.';
   }
 }
 function showGate(msg){gateMsg.textContent=msg;gate.hidden=false}
@@ -273,7 +273,7 @@ async function startCamera(o={}){
   if(o.deviceId) v.deviceId={exact:o.deviceId}; else if(o.facing) v.facingMode={ideal:o.facing};
   let s;
   try{ s=await navigator.mediaDevices.getUserMedia({video:v,audio:{echoCancellation:true,noiseSuppression:true}}); }
-  catch(e){ s=await navigator.mediaDevices.getUserMedia({video:v,audio:false}); }  // ohne Mikrofon weitermachen
+  catch(e){ s=await navigator.mediaDevices.getUserMedia({video:v,audio:false}); }  // Continue without a microphone.
   stream=s; vtrack=s.getVideoTracks()[0];
   live.srcObject=s;
   try{await live.play()}catch(e){}
@@ -282,7 +282,7 @@ async function startCamera(o={}){
   camFps=snapFps(st.frameRate||30); ms={t:0,i:0}; updateFpsUI();
   vtrack.addEventListener('ended',()=>{
     if(state==='recording') stopRecording();
-    showGate('Die Kamera wurde getrennt.');
+    showGate('The camera was disconnected.');
   });
   gate.hidden=true;
   startLoop(); sync();
@@ -306,10 +306,10 @@ async function flipCamera(){
       const i=devs.findIndex(d=>d.deviceId===st.deviceId);
       await startCamera({deviceId:devs[(i+1)%devs.length].deviceId});
     }
-  }catch(e){toast('Kamerawechsel nicht möglich.');initCamera()}
+  }catch(e){toast('Unable to switch camera.');initCamera()}
 }
 
-/* ---------- Bildfolge: jedes Kamerabild zählen, jedes n-te übernehmen ---------- */
+/* ---------- Frames: count every camera frame and take every nth one ---------- */
 let loopOn=false, ms={t:0,i:0};
 function measure(now,idx){
   if(!ms.t){ms={t:now,i:idx};return}
@@ -333,9 +333,9 @@ function startLoop(){
   }
 }
 
-/* ---------- Aufnahme ---------- */
+/* ---------- Recording ---------- */
 function computeCrop(){
-  // Aufgenommen wird genau der Ausschnitt, den die Vorschau im Fenster zeigt.
+  // Record exactly the crop shown by the preview in the window.
   const vw=live.videoWidth, vh=live.videoHeight, r=live.getBoundingClientRect();
   const sc=Math.max(r.width/vw,r.height/vh);
   const sw=Math.min(vw,r.width/sc), sh=Math.min(vh,r.height/sc);
@@ -360,7 +360,7 @@ function unlockScreen(){try{if(wake)wake.release()}catch(e){}wake=null}
 
 function startRecording(){
   if(state!=='live'||!stream||!live.videoWidth) return;
-  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){toast('Dieser Browser kann hier keine Videos aufnehmen.');return}
+  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){toast('This browser cannot record videos here.');return}
   const p=plan(target);
   crop=computeCrop(); canvas.width=crop.cw; canvas.height=crop.ch;
   ctx.fillStyle='#000'; ctx.fillRect(0,0,crop.cw,crop.ch);
@@ -370,7 +370,7 @@ function startRecording(){
   const mime=pickMime();
   const bps=Math.round(Math.min(10e6,Math.max(2e6,8e6*(crop.cw*crop.ch)/(1920*1080))));
   try{recorder=new MediaRecorder(out,mime?{mimeType:mime,videoBitsPerSecond:bps}:{videoBitsPerSecond:bps})}
-  catch(e){toast('Aufnahme konnte nicht gestartet werden.');return}
+  catch(e){toast('Recording could not be started.');return}
   rec={n:p.n,fps:p.fps,last:null,frames:0,chunks:[],track,t0:performance.now(),tEnd:0};
   recorder.ondataavailable=e=>{if(e.data&&e.data.size)rec.chunks.push(e.data)};
   recorder.onstop=finishRecording;
@@ -385,7 +385,7 @@ async function stopRecording(){
   if(state!=='recording') return;
   state='stopping'; sync();
   clearInterval(timerId);
-  pushFrame();                       // letztes Bild, damit die Dauer stimmt
+  pushFrame();                       // Include the last frame so the duration is accurate.
   rec.tEnd=performance.now();
   await sleep(160);
   try{recorder.stop()}catch(e){finishRecording()}
@@ -393,12 +393,12 @@ async function stopRecording(){
 function finishRecording(){
   unlockScreen();
   const chunks=rec.chunks;
-  if(!chunks.length){state='live';sync();toast('Aufnahme zu kurz.');return}
+  if(!chunks.length){state='live';sync();toast('Recording was too short.');return}
   const type=(recorder&&recorder.mimeType)||chunks[0].type||'video/webm';
   const blob=new Blob(chunks,{type});
   if(lastRec) URL.revokeObjectURL(lastRec.url);
   lastRec={blob,url:URL.createObjectURL(blob),duration:(rec.tEnd-rec.t0)/1000,fps:rec.fps,n:rec.n,type};
-  // Vorschaubild für den Wiedergabe-Button
+  // Thumbnail for the playback button
   const tc=document.createElement('canvas'); tc.width=tc.height=112;
   const s=Math.min(canvas.width,canvas.height);
   tc.getContext('2d').drawImage(canvas,(canvas.width-s)/2,(canvas.height-s)/2,s,s,0,0,112,112);
@@ -408,7 +408,7 @@ function finishRecording(){
   state='live'; rec=null; recorder=null; sync();
 }
 
-/* ---------- Wiedergabe (Echtzeit) ---------- */
+/* ---------- Playback (real time) ---------- */
 let hideT=0, dragging=false;
 const dur=()=>isFinite(player.duration)&&player.duration>0?player.duration:(lastRec?lastRec.duration:0);
 function showUI(){
@@ -418,7 +418,7 @@ function showUI(){
 function syncPP(){
   const playing=!player.paused&&!player.ended;
   $('icoPlay').hidden=playing; $('icoPause').hidden=!playing;
-  ppBtn.setAttribute('aria-label',playing?'Pause':'Wiedergabe');
+  ppBtn.setAttribute('aria-label',playing?'Pause':'Playback');
 }
 function updateSeek(){
   const d=dur(), t=player.currentTime||0;
@@ -427,7 +427,7 @@ function updateSeek(){
 }
 function waitFor(el,ev){return new Promise(r=>el.addEventListener(ev,r,{once:true}))}
 async function fixDuration(){
-  // MediaRecorder-Dateien melden anfangs oft keine Dauer.
+  // MediaRecorder files often initially report no duration.
   if(isFinite(player.duration)) return;
   await new Promise(res=>{
     const on=()=>{if(isFinite(player.duration)){player.removeEventListener('timeupdate',on);res()}};
@@ -465,12 +465,12 @@ function saveVideo(){
   const ext=lastRec.type.startsWith('video/mp4')?'mp4':'webm';
   const a=document.createElement('a');
   a.href=lastRec.url;
-  a.download=`aufnahme-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}-${nf1.format(lastRec.fps).replace(',','_')}fps.${ext}`;
+  a.download=`recording-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}-${nf1.format(lastRec.fps).replace('.','_')}fps.${ext}`;
   document.body.appendChild(a); a.click(); a.remove();
 }
 (function tick(){ if(state==='playback') updateSeek(); requestAnimationFrame(tick) })();
 
-/* ---------- Ereignisse ---------- */
+/* ---------- Events ---------- */
 recBtn.addEventListener('click',()=>state==='recording'?stopRecording():startRecording());
 thumbBtn.addEventListener('click',openPlayer);
 flipBtn.addEventListener('click',flipCamera);
