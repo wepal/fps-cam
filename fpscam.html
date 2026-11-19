@@ -27,8 +27,11 @@ svg{display:block}
 
 .view{position:fixed;inset:0;overflow:hidden;background:#000}
 video.fill{position:absolute;inset:0;width:100%;height:100%;background:#000}
-#live{object-fit:cover}
+canvas.fill{position:absolute;inset:0;width:100%;height:100%;background:#000;display:block}
+#live{object-fit:cover;display:none}
+#preview{object-fit:cover}
 #live.mirror{transform:scaleX(-1)}
+#preview.mirror{transform:scaleX(-1)}
 #player{object-fit:contain}
 
 .glass{background:var(--glass);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid var(--line)}
@@ -193,6 +196,12 @@ const seek=$('seek'), tCur=$('tCur'), tDur=$('tDur'), ppBtn=$('ppBtn'), pInfo=$(
 
 const canvas=document.createElement('canvas');
 const ctx=canvas.getContext('2d',{alpha:false});
+const previewCanvas=document.createElement('canvas');
+const previewCtx=previewCanvas.getContext('2d',{alpha:false});
+previewCanvas.classList.add('fill');
+previewCanvas.id='preview';
+app.insertBefore(previewCanvas, live);
+live.style.display='none';
 const nf1=new Intl.NumberFormat('en-US',{maximumFractionDigits:1});
 const nf2=new Intl.NumberFormat('en-US',{maximumFractionDigits:2});
 const hasRVFC='requestVideoFrameCallback' in HTMLVideoElement.prototype;
@@ -204,6 +213,7 @@ let state='live';            // live | recording | stopping | playback
 let stream=null, vtrack=null, camFps=30, multiCam=false;
 let target=Math.min(30,Math.max(1,Math.round(+lsGet('fps',15)||15)));
 let lastRec=null, rec=null, recorder=null, timerId=0, wake=null, crop=null;
+let previewLast=null;
 
 /* ---------- Helpers ---------- */
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -264,7 +274,7 @@ function camError(e){
   }
 }
 function showGate(msg){gateMsg.textContent=msg;gate.hidden=false}
-function stopStream(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;vtrack=null}
+function stopStream(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;vtrack=null;previewLast=null}
 
 async function startCamera(o={}){
   stopStream(); sync();
@@ -278,7 +288,9 @@ async function startCamera(o={}){
   live.srcObject=s;
   try{await live.play()}catch(e){}
   const st=vtrack.getSettings();
-  live.classList.toggle('mirror',st.facingMode?st.facingMode==='user':true);
+  const isMirror=st.facingMode?st.facingMode==='user':true;
+  live.classList.toggle('mirror',isMirror);
+  previewCanvas.classList.toggle('mirror',isMirror);
   camFps=snapFps(st.frameRate||30); ms={t:0,i:0}; updateFpsUI();
   vtrack.addEventListener('ended',()=>{
     if(state==='recording') stopRecording();
@@ -323,6 +335,16 @@ function measure(now,idx){
 function onFrame(now,idx){
   if(hasRVFC) measure(now,idx);
   if(state==='recording') handleFrame(idx);
+  if(state==='live') drawPreview(idx);
+}
+function drawPreview(idx){
+  const p=plan(target);
+  if(previewLast!==null&&idx-previewLast<p.n) return;
+  previewLast=idx;
+  if(!live.videoWidth) return;
+  previewCanvas.width=live.videoWidth;
+  previewCanvas.height=live.videoHeight;
+  previewCtx.drawImage(live,0,0);
 }
 function startLoop(){
   if(loopOn)return; loopOn=true;
@@ -339,7 +361,7 @@ function startLoop(){
 /* ---------- Recording ---------- */
 function computeCrop(){
   // Record exactly the crop shown by the preview in the window.
-  const vw=live.videoWidth, vh=live.videoHeight, r=live.getBoundingClientRect();
+  const vw=live.videoWidth, vh=live.videoHeight, r=previewCanvas.getBoundingClientRect();
   const sc=Math.max(r.width/vw,r.height/vh);
   const sw=Math.min(vw,r.width/sc), sh=Math.min(vh,r.height/sc);
   const k=Math.min(1,1920/Math.max(sw,sh));
@@ -454,7 +476,7 @@ async function openPlayer(){
   syncPP(); showUI();
 }
 function closePlayer(){
-  player.pause(); pv.hidden=true; state='live'; sync();
+  player.pause(); pv.hidden=true; state='live'; previewLast=null; sync();
 }
 function togglePlay(){
   if(player.paused||player.ended){
